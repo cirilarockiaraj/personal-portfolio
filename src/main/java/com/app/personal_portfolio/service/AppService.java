@@ -1,18 +1,16 @@
 package com.app.personal_portfolio.service;
 
-import java.io.File;
 import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.app.personal_portfolio.entity.AppData;
 import com.app.personal_portfolio.entity.Email;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.app.personal_portfolio.repository.PortfolioRepository;
 
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
@@ -30,8 +28,9 @@ import jakarta.mail.internet.MimeMultipart;
 @Service
 public class AppService {
     Logger logger = LogManager.getLogger(AppService.class.getName());
-    @Value("${app.json.url}")
-    private String appFileUrl;
+
+    @Autowired
+    private PortfolioRepository portfolio;
 
     @Value("${spring.mail.username}")
     String from;
@@ -45,19 +44,7 @@ public class AppService {
     String host;
 
     public AppData getJson() {
-        ObjectMapper mapper = new ObjectMapper();
-        AppData specificData = null;
-        try {
-            File file = new File(appFileUrl);
-            JsonNode res = mapper.readTree(file);
-            specificData = mapper.convertValue(res, new TypeReference<AppData>() {
-            });
-            logger.info(appFileUrl, specificData);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
-        }
-        return specificData;
+        return portfolio.findAll().get(0);
     }
 
     public void emailSender(Email email) throws AddressException, MessagingException {
