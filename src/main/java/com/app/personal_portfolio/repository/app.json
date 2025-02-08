@@ -1,0 +1,80 @@
+{
+    "navBar": {
+        "profileImgUrl": "https://1drv.ms/i/c/D914C8B334A253E0/IQSxipFUuiRIQKdBYrkxcr1IAbFVAxsNgvecagPIDIrdV48?width=1272&height=1272",
+        "name": "Ciril Arockiaraj",
+        "socialMedia": {
+            "instagram": "https://www.instagram.com/ciril804/?__pwa=1",
+            "facebook": "",
+            "linkedin": "https://www.linkedin.com/in/ciril-arockiaraj-s-b3085930b"
+        }
+    },
+    "home": {
+        "name": "Ciril Arockiaraj",
+        "roles": "Spring Boot Developer, Selenium Developer, Guidewire Developer, SmartComm Developer",
+        "backgroundImgUrl": "https://1drv.ms/i/c/D914C8B334A253E0/IQRT806D-RoHSpszCM1U9V6wAXz_dX9iYruSNOrvxfiOpls?width=960&height=1280"
+    },
+    "about": {
+        "description1": "Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.",
+        "description2":"",
+        "description3":"",
+        "profileImgUrl": "https://1drv.ms/i/c/D914C8B334A253E0/IQRT806D-RoHSpszCM1U9V6wAXz_dX9iYruSNOrvxfiOpls?width=960&height=1280",
+        "role": "Junior Software Developer",
+        "dob": "14 - May - 2001",
+        "website": "",
+        "phone": "6382810644",
+        "address": "Viralimalai, Pudukkottai",
+        "age": "23",
+        "degree": "MSc, Computer Science",
+        "email": "cirilarockiaraj@outlook.com",
+        "freelance":"None"
+    },
+    "resume": {
+        "summary": {
+            "name": "",
+            "description": "",
+            "address": "",
+            "phone": "",
+            "email": ""
+        },
+        "education": [
+            {
+                "course": "",
+                "durationYears": "",
+                "institute": "",
+                "description": [
+                    {},
+                    {},
+                    {}
+                ]
+            },
+            {
+                "course": "",
+                "durationYears": "",
+                "institute": "",
+                "description": [
+                    {},
+                    {},
+                    {}
+                ]
+            }
+        ],
+        "experience": [
+            {
+                "companyName": "",
+                "durationYears": "",
+                "companyAddress": "",
+                "description": [
+                    {},
+                    {},
+                    {}
+                ]
+            }
+        ]
+    },
+    "contact": {
+        "address": "780, Mela theru, Mullaiyur, Viralimalai, Pudukkottai(Dt), Tamil Nadu",
+        "phone": "6382810644",
+        "email": "cirilarockiaraj@gamil.com",
+        "mapIFrame": "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d212.23138393948418!2d78.59402599565541!3d10.606279611299222!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2sin!4v1738507736891!5m2!1sen!2sin"
+    }
+}
