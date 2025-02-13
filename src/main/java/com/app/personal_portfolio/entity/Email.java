@@ -1,9 +1,13 @@
 package com.app.personal_portfolio.entity;
 
+import org.springframework.data.annotation.Id;
+
 import jakarta.annotation.Nonnull;
 
 public class Email {
 
+    @Id
+    private String Id;
     @Nonnull
     private String username;
 	@Nonnull
@@ -12,7 +16,9 @@ public class Email {
     private String subject;
 	@Nonnull
     private String message;
-   
+
+    
+
     public String getEmailId() {
 		return emailId;
 	}
@@ -36,6 +42,12 @@ public class Email {
     }
     public void setUsername(String username) {
         this.username = username;
+    }
+    public String getId() {
+        return Id;
+    }
+    public void setId(String id) {
+        Id = id;
     }
     
 }

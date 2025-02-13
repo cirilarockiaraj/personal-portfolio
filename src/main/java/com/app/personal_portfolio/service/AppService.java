@@ -6,10 +6,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.app.personal_portfolio.entity.AppData;
 import com.app.personal_portfolio.entity.Email;
+import com.app.personal_portfolio.repository.EmailRepository;
 import com.app.personal_portfolio.repository.PortfolioRepository;
 
 import jakarta.mail.Authenticator;
@@ -32,6 +34,9 @@ public class AppService {
     @Autowired
     private PortfolioRepository portfolio;
 
+    @Autowired
+    private EmailRepository emailRepo;
+
     @Value("${spring.mail.username}")
     String from;
     @Value("${app.mail.to}")
@@ -47,6 +52,7 @@ public class AppService {
         return portfolio.findAll().get(0);
     }
 
+    @Async
     public void emailSender(Email email) throws AddressException, MessagingException {
         // SMTP server settings
         Properties props = new Properties();
@@ -65,11 +71,10 @@ public class AppService {
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(from));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email.getEmailId()));
-        message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(to));
         message.setSubject(email.getSubject());
-        String htmlContent = "<p>Hi, </p>"+email.getUsername()+"<br/><p>Thankyou for contact with me!</p>";
+
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        mimeBodyPart.setContent(htmlContent, "text/html");
+        mimeBodyPart.setContent(email.getMessage(), "text/html");
 
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(mimeBodyPart);
@@ -77,6 +82,15 @@ public class AppService {
         message.setContent(multipart);
         // Send email
         Transport.send(message);
-        System.out.println("Email sent successfully!");
+    }
+
+    @Async
+    public void saveMailContent(Email email) throws AddressException, MessagingException {
+        emailRepo.save(email);
+        logger.info("Email Request save successfully....");
+        email.setEmailId(to);
+        email.setMessage("<p>" + email.getMessage() + "</p>");
+        emailSender(email);
+        logger.info("Email successfully sent to admin...");
     }
 }

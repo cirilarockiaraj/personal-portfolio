@@ -16,35 +16,43 @@ import com.app.personal_portfolio.service.AppService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-
 @Controller
 public class PortfolioController {
     Logger logger = LogManager.getLogger(AppService.class.getName());
     AppData responseData;
 
-	private final AppService emailService;
+    private final AppService appService;
+
     public PortfolioController(AppService emailService) {
-        this.emailService = emailService;
+        this.appService = emailService;
         responseData = emailService.getJson();
     }
 
-	@GetMapping("/")
-	public String getHome(Model model) {
-		model.addAttribute("appData", responseData);
+    @GetMapping("/")
+    public String getHome(Model model) {
+        model.addAttribute("appData", responseData);
         logger.info("App rendering successfully");
-		return "index";
-	}
+        return "index";
+    }
 
-	@PostMapping("/send")
+    @PostMapping("/send")
     public ResponseEntity<?> sendEmail(@Validated @RequestBody Email emailRequest) {
         try {
-            emailService.emailSender(emailRequest);
-            logger.info("Email sent successfully!");
+            Email emailCopy = new Email();
+            String htmlContent = "<p>Hi, " + emailRequest.getUsername()
+                    + "</p><br/><p>Your message recieved me. I will replay to you soon.</p><br/><br/><i><b>Note: </b>This is an automation mail. don't replay this mail. once I got your mail I will try to replay to you soon. thankyou for understanding.</i>";
+            emailCopy.setSubject("Replay: " + emailRequest.getSubject());
+            emailCopy.setMessage(htmlContent);
+            emailCopy.setEmailId(emailRequest.getEmailId());
+            emailCopy.setEmailId(emailRequest.getUsername());
+            appService.emailSender(emailCopy);
+            appService.saveMailContent(emailRequest);
+            logger.info("Email sent successfully...");
             return ResponseEntity.ok().body("Email sent successfully..");
         } catch (Exception e) {
             logger.error(e);
-            return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED).body("Error sending email: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED)
+                    .body("Error sending email: " + e.getMessage());
         }
     }
 }
