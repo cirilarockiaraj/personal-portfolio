@@ -2,6 +2,7 @@ package com.app.personal_portfolio.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -38,13 +39,7 @@ public class PortfolioController {
     @PostMapping("/send")
     public ResponseEntity<?> sendEmail(@Validated @RequestBody Email emailRequest) {
         try {
-            Email emailCopy = new Email();
-            String htmlContent = "<p>Hi, " + emailRequest.getUsername()
-                    + "</p><br/><p>Your message recieved me. I will replay to you soon.</p><br/><br/><i><b>Note: </b>This is an automation mail. don't replay this mail. once I got your mail I will try to replay to you soon. thankyou for understanding.</i>";
-            emailCopy.setSubject("Replay: " + emailRequest.getSubject());
-            emailCopy.setMessage(htmlContent);
-            emailCopy.setEmailId(emailRequest.getEmailId());
-            emailCopy.setEmailId(emailRequest.getUsername());
+            Email emailCopy = getEmail(emailRequest);
             appService.emailSender(emailCopy);
             appService.saveMailContent(emailRequest);
             logger.info("Email sent successfully...");
@@ -54,5 +49,16 @@ public class PortfolioController {
             return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED)
                     .body("Error sending email: " + e.getMessage());
         }
+    }
+
+    private static @NotNull Email getEmail(Email emailRequest) {
+        Email emailCopy = new Email();
+        String htmlContent = "<p>Hi, " + emailRequest.getUsername()
+                + "</p><br/><p>Your message recieved me. I will replay to you soon.</p><br/><br/><i><b>Note: </b>This is an automation mail. don't replay this mail. once I got your mail I will try to replay to you soon. thankyou for understanding.</i>";
+        emailCopy.setUsername(emailRequest.getUsername());
+        emailCopy.setSubject("Replay: " + emailRequest.getSubject());
+        emailCopy.setMessage(htmlContent);
+        emailCopy.setEmailId(emailRequest.getEmailId());
+        return emailCopy;
     }
 }
