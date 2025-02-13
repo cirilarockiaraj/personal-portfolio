@@ -6,6 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -37,60 +39,47 @@ public class AppService {
     @Autowired
     private EmailRepository emailRepo;
 
+    @Autowired
+    private JavaMailSender mailSender;
+
     @Value("${spring.mail.username}")
     String from;
+
     @Value("${app.mail.to}")
     String to;
-    @Value("${spring.mail.password}")
-    String password;
-    @Value("${spring.mail.port}")
-    String port;
-    @Value("${spring.mail.host}")
-    String host;
 
     public AppData getJson() {
         return portfolio.findAll().get(0);
     }
 
     @Async
-    public void emailSender(Email email) throws AddressException, MessagingException {
-        // SMTP server settings
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", port);
+    public void emailSender(Email email) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
 
-        // Create session with authentication
-        Session session = Session.getInstance(props, new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(from, password);
-            }
-        });
-        // Create email message
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(from));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email.getEmailId()));
-        message.setSubject(email.getSubject());
+            helper.setTo(email.getEmailId());
+            helper.setSubject(email.getSubject());
+            helper.setText(email.getMessage(), true);
+            helper.setFrom(from);
 
-        MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        mimeBodyPart.setContent(email.getMessage(), "text/html");
+            mailSender.send(message);
+            logger.info("Email sent to {}", email.getEmailId());
 
-        Multipart multipart = new MimeMultipart();
-        multipart.addBodyPart(mimeBodyPart);
-
-        message.setContent(multipart);
-        // Send email
-        Transport.send(message);
+        } catch (MessagingException e) {
+            logger.error(e.getMessage());
+        }
     }
 
     @Async
     public void saveMailContent(Email email) throws AddressException, MessagingException {
         emailRepo.save(email);
         logger.info("Email Request save successfully....");
-        email.setEmailId(to);
-        email.setMessage("<p>" + email.getMessage() + "</p>");
-        emailSender(email);
-        logger.info("Email successfully sent to admin...");
+        Email adminMailContent = new Email();
+        adminMailContent.setSubject(email.getSubject());
+        adminMailContent.setUsername(email.getUsername());
+        adminMailContent.setEmailId(to);
+        adminMailContent.setMessage("<p>" + email.getMessage() + "</p>");
+        emailSender(adminMailContent);
     }
 }
